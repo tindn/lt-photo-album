@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace photo_album
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -24,7 +24,8 @@ namespace photo_album
                 int albumId = int.Parse(arguments.First(a => a.Key == "albumId").Value ?? "0");
                 int displayCount = int.Parse(arguments.FirstOrDefault(a => a.Key == "displayCount").Value ?? "10");
                 int startIndex = int.Parse(arguments.FirstOrDefault(a => a.Key == "startIndex").Value ?? "1");
-                var photos = GetPhotosForAlbum(albumId);
+                var url = ConfigurationManager.AppSettings.Get("photo-album-source-url");
+                var photos = GetPhotosForAlbum(albumId, url);
                 Console.WriteLine($"Album {albumId} has {photos.Count} photos");
                 if (startIndex > photos.Count)
                 {
@@ -44,7 +45,7 @@ namespace photo_album
             }
         }
 
-        static List<KeyValuePair<string, string>> GetArguments(string[] args)
+        public static List<KeyValuePair<string, string>> GetArguments(string[] args)
         {
             var inputRegex = new Regex(@"(\d+){1}(\s-([a-zA-Z])\s(\d+))*");
             var inputString = string.Join(" ", args);
@@ -75,9 +76,8 @@ namespace photo_album
             return arguments;
         }
 
-        static List<Photo> GetPhotosForAlbum(int id)
+        public static List<Photo> GetPhotosForAlbum(int id, string url)
         {
-            var url = ConfigurationManager.AppSettings.Get("photo-album-source-url");
             var getAlbumTask = new HttpClient().GetAsync($"{url}?albumId={id}");
             getAlbumTask.Wait();
             var response = getAlbumTask.Result;
@@ -96,7 +96,7 @@ You can use argument -s to specify the starting position of the photos
 Default starting position is 1. For example, '-s 5' to start from the fifth photo.";
         }
 
-        static int GetDisplayEnd(int photosCount, int startIndex, int displayCount)
+        public static int GetDisplayEnd(int photosCount, int startIndex, int displayCount)
         {
             return displayCount > photosCount - startIndex ? photosCount : displayCount + startIndex - 1;
         }
