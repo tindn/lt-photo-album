@@ -17,7 +17,7 @@ namespace photo_album
                 DisplayHelp();
                 return;
             }
-            var inputRegex = new Regex(@"(\d+){1}(\s{1}-n\s(\d+))?(\s{1}-s\s(\d+))?");
+            var inputRegex = new Regex(@"(\d+){1}(\s-([a-zA-Z])\s(\d+))*");
             var inputString = string.Join(" ", args);
             var match = inputRegex.Match(inputString);
             if (!match.Success)
@@ -27,8 +27,25 @@ namespace photo_album
             }
 
             int albumId = int.Parse(match.Groups[1].Value);
-            var displayCount = match.Groups[3].Success ? int.Parse(match.Groups[3].Value) : 10;
-            var startIndex = match.Groups[5].Success ? int.Parse(match.Groups[5].Value) : 0;
+            int displayCount = 10;
+            int startIndex = 1;
+            if (match.Groups[3].Success && match.Groups[4].Success)
+            {
+                for (var i = 0; i < match.Groups[3].Captures.Count; i++)
+                {
+                    switch (match.Groups[3].Captures[i].Value)
+                    {
+                        case "n":
+                            displayCount = int.Parse(match.Groups[4].Captures[i].Value);
+                            break;
+                        case "s":
+                            startIndex = int.Parse(match.Groups[4].Captures[i].Value);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
 
             var photos = GetPhotosForAlbum(albumId);
             Console.WriteLine($"Album {albumId} has {photos.Count} photos");
