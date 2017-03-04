@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Configuration;
 
 namespace photo_album
@@ -26,12 +25,7 @@ namespace photo_album
                 return;
             }
             Console.WriteLine($"Album Id: {albumId}");
-            var getAlbumTask = GetAlbum(albumId);
-            getAlbumTask.Wait();
-            var response = getAlbumTask.Result;
-            var readTask = response.Content.ReadAsStringAsync();
-            readTask.Wait();
-            var responseString= readTask.Result;
+            var responseString = GetAlbumJsonString(albumId);
             var albums = JsonConvert.DeserializeObject<List<Album>>(responseString);
             Console.WriteLine($"Album {albumId} has {albums.Count} photos");
             Console.WriteLine($"Showing the first 10 photos");
@@ -41,20 +35,25 @@ namespace photo_album
             });
         }
 
-        static Task<HttpResponseMessage> GetAlbum(int id)
+        static string GetAlbumJsonString(int id)
         {
             var url = ConfigurationManager.AppSettings.Get("photo-album-source-url");
-            return new HttpClient().GetAsync($"{url}?albumId={id}");
+            var getAlbumTask = new HttpClient().GetAsync($"{url}?albumId={id}");
+            getAlbumTask.Wait();
+            var response = getAlbumTask.Result;
+            var readTask = response.Content.ReadAsStringAsync();
+            readTask.Wait();
+            return readTask.Result;
         }
     }
 
     class Album
     {
-        public int AlbumId;
-        public int Id;
-        public string Title;
-        public string Url;
-        public string ThumbnailUrl;
+        public int AlbumId { get; set; }
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Url { get; set; }
+        public string ThumbnailUrl { get; set; }
 
         public string Display()
         {
