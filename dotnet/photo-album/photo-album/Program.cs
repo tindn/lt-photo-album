@@ -14,13 +14,13 @@ namespace photo_album
         {
             if (args.Length == 0 || args[0] == "-h")
             {
-                Console.WriteLine("Use photo-album {id} to get list of photos for certain photo album");
+                Console.WriteLine("Use photo-album [id] to get a list of photos for certain photo album");
                 Console.Write("For example 'photo-album 3' to get photos of album 3");
                 return;
             }
 
             int albumId;
-            while (!int.TryParse(args[0], out albumId))
+            if (!int.TryParse(args[0], out albumId))
             {
                 Console.WriteLine("Invalid album id.");
                 return;
@@ -37,7 +37,7 @@ namespace photo_album
             Console.WriteLine($"Showing the first 10 photos");
             albums.Take(10).ToList().ForEach(a =>
             {
-                Console.WriteLine($"[{a.Id}] {a.Title}");
+                Console.WriteLine(a.Display());
             });
         }
 
@@ -50,10 +50,15 @@ namespace photo_album
 
     class Album
     {
-        public int AlbumId { get; set; }
-        public int Id { get; set; }
-        public string Title { get; set; }
-        public string Url { get; set; }
-        public string ThumbnailUrl { get; set; }
+        public int AlbumId;
+        public int Id;
+        public string Title;
+        public string Url;
+        public string ThumbnailUrl;
+
+        public string Display()
+        {
+            return $"[{this.Id}] {this.Title}";
+        }
     }
 }
