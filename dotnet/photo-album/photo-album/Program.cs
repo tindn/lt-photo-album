@@ -14,12 +14,7 @@ namespace photo_album
         {
             if (args.Length == 0 || args[0] == "-h")
             {
-                Console.WriteLine("Use photo-album [id] to get a list of photos for certain photo album");
-                Console.WriteLine("For example 'photo-album 3' to get photos of album 3");
-                Console.WriteLine(@"You can use argument -n to specify the number of photos to display. 
-                                    Default number is 10.");
-                Console.WriteLine(@"You can use argument -s to specify the starting position of the photos. 
-                                    Default starting position is 1.");
+                DisplayHelp();
                 return;
             }
             var inputRegex = new Regex(@"(\d+){1}(\s{1}-n\s(\d+))?(\s{1}-s\s(\d+))?");
@@ -43,13 +38,13 @@ namespace photo_album
                 Console.WriteLine("The starting position exceeds the number of photos in album");
                 return;
             }
-            var displayEnd = displayCount > photos.Count - startIndex ? photos.Count 
+            var displayEnd = displayCount > photos.Count - startIndex ? photos.Count
                 : displayCount + startIndex - 1;
             Console.WriteLine($"Showing photos from {startIndex} to {displayEnd}");
-            photos.Skip(startIndex -1).Take(displayCount).ToList().ForEach(a =>
-            {
-                Console.WriteLine(a.Display());
-            });
+            photos.Skip(startIndex - 1).Take(displayCount).ToList().ForEach(a =>
+             {
+                 Console.WriteLine(a.Display());
+             });
         }
 
         static string GetAlbumJsonString(int id)
@@ -61,6 +56,16 @@ namespace photo_album
             var readTask = response.Content.ReadAsStringAsync();
             readTask.Wait();
             return readTask.Result;
+        }
+
+        static void DisplayHelp()
+        {
+            Console.WriteLine("Use photo-album [id] to get a list of photos for certain photo album");
+            Console.WriteLine("For example 'photo-album 3' to get photos of album 3");
+            Console.WriteLine("You can use argument -n to specify the number of photos to display.");
+            Console.WriteLine("Default number is 10. For example, '-n 15' to display 15 photos.");
+            Console.WriteLine("You can use argument -s to specify the starting position of the photos.");
+            Console.WriteLine("Default starting position is 1. For example, '-s 5' to start from the fifth photo.");
         }
     }
 
