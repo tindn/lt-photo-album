@@ -27,27 +27,21 @@ namespace photo_album
             }
 
             int albumId = int.Parse(match.Groups[1].Value);
-            Console.WriteLine($"Album Id: {albumId}");
             var displayCount = match.Groups[3].Success ? int.Parse(match.Groups[3].Value) : 10;
             var startIndex = match.Groups[5].Success ? int.Parse(match.Groups[5].Value) : 0;
-            var responseString = GetAlbumJsonString(albumId);
-            var photos = JsonConvert.DeserializeObject<List<Photo>>(responseString);
+
+            var photos = GetPhotosForAlbum(albumId);
             Console.WriteLine($"Album {albumId} has {photos.Count} photos");
             if (startIndex > photos.Count)
             {
                 Console.WriteLine("The starting position exceeds the number of photos in album");
                 return;
             }
-            var displayEnd = displayCount > photos.Count - startIndex ? photos.Count
-                : displayCount + startIndex - 1;
-            Console.WriteLine($"Showing photos from {startIndex} to {displayEnd}");
-            photos.Skip(startIndex - 1).Take(displayCount).ToList().ForEach(a =>
-             {
-                 Console.WriteLine(a.Display());
-             });
+
+            DisplayPhotos(photos, startIndex, displayCount);
         }
 
-        static string GetAlbumJsonString(int id)
+        static List<Photo> GetPhotosForAlbum(int id)
         {
             var url = ConfigurationManager.AppSettings.Get("photo-album-source-url");
             var getAlbumTask = new HttpClient().GetAsync($"{url}?albumId={id}");
@@ -55,7 +49,7 @@ namespace photo_album
             var response = getAlbumTask.Result;
             var readTask = response.Content.ReadAsStringAsync();
             readTask.Wait();
-            return readTask.Result;
+            return JsonConvert.DeserializeObject<List<Photo>>(readTask.Result);
         }
 
         static void DisplayHelp()
@@ -66,6 +60,17 @@ namespace photo_album
             Console.WriteLine("Default number is 10. For example, '-n 15' to display 15 photos.");
             Console.WriteLine("You can use argument -s to specify the starting position of the photos.");
             Console.WriteLine("Default starting position is 1. For example, '-s 5' to start from the fifth photo.");
+        }
+
+        static void DisplayPhotos(List<Photo> photos, int startIndex, int displayCount)
+        {
+            var displayEnd = displayCount > photos.Count - startIndex ? photos.Count
+                            : displayCount + startIndex - 1;
+            Console.WriteLine($"Showing photos from {startIndex} to {displayEnd}");
+            photos.Skip(startIndex - 1).Take(displayCount).ToList().ForEach(a =>
+             {
+                 Console.WriteLine(a.Display());
+             });
         }
     }
 
