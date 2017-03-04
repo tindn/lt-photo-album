@@ -14,21 +14,47 @@ namespace photo_album
         {
             if (args.Length == 0 || args[0] == "-h")
             {
-                DisplayHelp();
+                var helpText = GetHelp();
+                Console.WriteLine(helpText);
                 return;
             }
+            try
+            {
+                var arguments = GetArguments(args);
+                int albumId = int.Parse(arguments.First(a => a.Key == "albumId").Value ?? "0");
+                int displayCount = int.Parse(arguments.FirstOrDefault(a => a.Key == "displayCount").Value ?? "10");
+                int startIndex = int.Parse(arguments.FirstOrDefault(a => a.Key == "startIndex").Value ?? "1");
+                var photos = GetPhotosForAlbum(albumId);
+                Console.WriteLine($"Album {albumId} has {photos.Count} photos");
+                if (startIndex > photos.Count)
+                {
+                    Console.WriteLine("The starting position exceeds the number of photos in album");
+                    return;
+                }
+                Console.WriteLine($"Showing photos from {startIndex} to {GetDisplayEnd(photos.Count, startIndex, displayCount)}");
+                photos.Skip(startIndex - 1).Take(displayCount).ToList().ForEach(a =>
+                 {
+                     Console.WriteLine(a.ToString());
+                 });
+            }
+            catch (FormatException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return;
+            }
+        }
+
+        static List<KeyValuePair<string, string>> GetArguments(string[] args)
+        {
             var inputRegex = new Regex(@"(\d+){1}(\s-([a-zA-Z])\s(\d+))*");
             var inputString = string.Join(" ", args);
             var match = inputRegex.Match(inputString);
             if (!match.Success)
             {
-                Console.WriteLine("Incorrect format");
-                return;
+                throw new FormatException("Invalid arguments");
             }
-
-            int albumId = int.Parse(match.Groups[1].Value);
-            int displayCount = 10;
-            int startIndex = 1;
+            var arguments = new List<KeyValuePair<string, string>>();
+            arguments.Add(new KeyValuePair<string, string>("albumId", match.Groups[1].Value));
             if (match.Groups[3].Success && match.Groups[4].Success)
             {
                 for (var i = 0; i < match.Groups[3].Captures.Count; i++)
@@ -36,26 +62,17 @@ namespace photo_album
                     switch (match.Groups[3].Captures[i].Value)
                     {
                         case "n":
-                            displayCount = int.Parse(match.Groups[4].Captures[i].Value);
+                            arguments.Add(new KeyValuePair<string, string>("displayCount", match.Groups[4].Captures[i].Value));
                             break;
                         case "s":
-                            startIndex = int.Parse(match.Groups[4].Captures[i].Value);
+                            arguments.Add(new KeyValuePair<string, string>("startIndex", match.Groups[4].Captures[i].Value));
                             break;
                         default:
                             break;
                     }
                 }
             }
-
-            var photos = GetPhotosForAlbum(albumId);
-            Console.WriteLine($"Album {albumId} has {photos.Count} photos");
-            if (startIndex > photos.Count)
-            {
-                Console.WriteLine("The starting position exceeds the number of photos in album");
-                return;
-            }
-
-            DisplayPhotos(photos, startIndex, displayCount);
+            return arguments;
         }
 
         static List<Photo> GetPhotosForAlbum(int id)
@@ -69,25 +86,19 @@ namespace photo_album
             return JsonConvert.DeserializeObject<List<Photo>>(readTask.Result);
         }
 
-        static void DisplayHelp()
+        static string GetHelp()
         {
-            Console.WriteLine("Use photo-album [id] to get a list of photos for certain photo album");
-            Console.WriteLine("For example 'photo-album 3' to get photos of album 3");
-            Console.WriteLine("You can use argument -n to specify the number of photos to display.");
-            Console.WriteLine("Default number is 10. For example, '-n 15' to display 15 photos.");
-            Console.WriteLine("You can use argument -s to specify the starting position of the photos.");
-            Console.WriteLine("Default starting position is 1. For example, '-s 5' to start from the fifth photo.");
+            return @"Use photo-album [id] to get a list of photos for certain photo album
+For example 'photo-album 3' to get photos of album 3
+You can use argument -n to specify the number of photos to display.
+Default number is 10. For example, '-n 15' to display 15 photos.
+You can use argument -s to specify the starting position of the photos
+Default starting position is 1. For example, '-s 5' to start from the fifth photo.";
         }
 
-        static void DisplayPhotos(List<Photo> photos, int startIndex, int displayCount)
+        static int GetDisplayEnd(int photosCount, int startIndex, int displayCount)
         {
-            var displayEnd = displayCount > photos.Count - startIndex ? photos.Count
-                            : displayCount + startIndex - 1;
-            Console.WriteLine($"Showing photos from {startIndex} to {displayEnd}");
-            photos.Skip(startIndex - 1).Take(displayCount).ToList().ForEach(a =>
-             {
-                 Console.WriteLine(a.Display());
-             });
+            return displayCount > photosCount - startIndex ? photosCount : displayCount + startIndex - 1;
         }
     }
 
@@ -99,7 +110,7 @@ namespace photo_album
         public string Url { get; set; }
         public string ThumbnailUrl { get; set; }
 
-        public string Display()
+        public override string ToString()
         {
             return $"[{this.Id}] {this.Title}";
         }
