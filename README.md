@@ -49,7 +49,7 @@ You can use Visual studio to open, build, and run the project. I used VS 2015, b
 When running the program in Visual studio, the default argument is -h to display the help text. From there, you can then use the right command. 
 
 I have also uploaded the zip files here, so it can be run from any command prompt on Windows without using Visual Studio. 
-1. Just download the zip files and extract them to a specific folder. The files include the executable, the config which contains the source url, the related files for NewtonsoftJson.
+1. Just download the zipped files [here](https://github.com/tindn/lt-photo-album/tree/master/dotnet/photo-album){:target="_blank"} and extract them to a specific folder. The files include the executable, the config which contains the source url, the related files for NewtonsoftJson.
 1. Open up command prompt, powershell, or your favorite Command line tool (mine is [cmder](http://cmder.net/){:target="_blank"}). Go to the directory where you extracted the files (or even the bin folder if you build the source code in VS). You can use `cd path\to\file` or `pushd path\to\file` to get there.
 1. Simply type photo-album to run the executable and see the magic happen.
 
