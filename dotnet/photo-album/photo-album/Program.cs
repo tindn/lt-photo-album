@@ -16,33 +16,43 @@ namespace photo_album
             {
                 var helpText = GetHelp();
                 Console.WriteLine(helpText);
-                return;
+                var input = Console.ReadLine();
+                args = input.Split(' ');
             }
             try
             {
-                var arguments = GetArguments(args);
-                int albumId = int.Parse(arguments.First(a => a.Key == "albumId").Value ?? "0");
-                int displayCount = int.Parse(arguments.FirstOrDefault(a => a.Key == "displayCount").Value ?? "10");
-                int startIndex = int.Parse(arguments.FirstOrDefault(a => a.Key == "startIndex").Value ?? "1");
-                var url = ConfigurationManager.AppSettings.Get("photo-album-source-url");
-                var photos = GetPhotosForAlbum(albumId, url);
-                Console.WriteLine($"Album {albumId} has {photos.Count} photos");
-                if (startIndex > photos.Count)
-                {
-                    Console.WriteLine("The starting position exceeds the number of photos in album");
-                    return;
-                }
-                Console.WriteLine($"Showing photos from {startIndex} to {GetDisplayEnd(photos.Count, startIndex, displayCount)}");
-                photos.Skip(startIndex - 1).Take(displayCount).ToList().ForEach(a =>
-                 {
-                     Console.WriteLine(a.ToString());
-                 });
+                ProcessInput(args);
             }
             catch (FormatException ex)
             {
                 Console.WriteLine(ex.Message);
+                ProcessInput(Console.ReadLine().Split(' '));
+            }
+        }
+
+        public static void ProcessInput(string[] args)
+        {
+            if (args.Length > 1 && args[0] == "q")
+            {
                 return;
             }
+            var arguments = GetArguments(args);
+            int albumId = int.Parse(arguments.First(a => a.Key == "albumId").Value ?? "0");
+            int displayCount = int.Parse(arguments.FirstOrDefault(a => a.Key == "displayCount").Value ?? "10");
+            int startIndex = int.Parse(arguments.FirstOrDefault(a => a.Key == "startIndex").Value ?? "1");
+            var url = ConfigurationManager.AppSettings.Get("photo-album-source-url");
+            var photos = GetPhotosForAlbum(albumId, url);
+            Console.WriteLine($"Album {albumId} has {photos.Count} photos");
+            if (startIndex > photos.Count)
+            {
+                Console.WriteLine("The starting position exceeds the number of photos in album");
+                return;
+            }
+            Console.WriteLine($"Showing photos from {startIndex} to {GetDisplayEnd(photos.Count, startIndex, displayCount)}");
+            photos.Skip(startIndex - 1).Take(displayCount).ToList().ForEach(a =>
+             {
+                 Console.WriteLine(a.ToString());
+             });
         }
 
         public static List<KeyValuePair<string, string>> GetArguments(string[] args)
