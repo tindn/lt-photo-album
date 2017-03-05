@@ -34,10 +34,15 @@ Provide a README that contains instructions on how to build and run your applica
 ## Assumptions 
 
 The instruction is generic to allow for flexibility. However, as I thought about this, I decided to impose certain constraints and assumptions to help make decisions along the way.
+
 1. I'm choosing to use C# language and .NET framework to display my profiency in .NET. I also want to write a similar application in JavaScript and NodeJs in the future.
-1. There's no specification on the run time environment. I assume this means it should be cross-platform. Given this, .NET Core is the obvious framework of choice. However, at the time of writing this (March 3-5 2017), there are big changes in .NET Core. The project.json style of .NET Core that has been available since 2015 has been scraped and replaced by an improved csproj version as of [.NET Core Preview 3](https://blogs.msdn.microsoft.com/dotnet/2016/11/16/announcing-net-core-tools-msbuild-alpha/){:target="_blank"} (released Nov 2016). This means running a .NET Core project will require downloading the right SDK. While this isn't challenging, with the upcoming release of VS 2017 (March 7th), things are a little unclear. As such, I have made the decision to write the application targeting .NET framework 4.6.1.
+
+1. There's no specification on the run time environment. I assume this means it should be cross-platform. Given this, .NET Core is the obvious framework of choice. However, at the time of writing this (March 3-5 2017), there are big changes in .NET Core. The project.json style of .NET Core that has been available since 2015 has been scraped and replaced by an improved csproj version as of <a href="https://blogs.msdn.microsoft.com/dotnet/2016/11/16/announcing-net-core-tools-msbuild-alpha" target="_blank">.NET Core Preview 3]</a> (released Nov 2016). This means running a .NET Core project will require downloading the right SDK. While this isn't challenging, with the upcoming release of VS 2017 (March 7th), things are a little unclear. As such, I have made the decision to write the application targeting .NET framework 4.6.1.
+
 1. There are a number of choices for unit testing frameworks, including NUnit, xUnit, and MSTest. NUnit was chosen for familiarity with the package. This allows for faster development.
+
 1. NewtonsoftJson is used to deserialize the json response received from endpoint provided. Again, this package is used based on my own familiarity with it.
+
 1. Usage: the usage illustrated by the instruction is quite simple. I would need to add a help function, as well as a way to control the number of photos returned, and a way to scroll through the photos.
 
 ## Source code and run instructions
