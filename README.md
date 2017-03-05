@@ -53,21 +53,22 @@ You can use Visual studio to open, build, and run the project. I used VS 2015, b
  
 When running the program in Visual studio, the default argument is -h to display the help text. From there, you can then use the right command. 
 
-I have also uploaded the zip files here, so it can be run from any command prompt on Windows without using Visual Studio. 
+I have also uploaded the zip files so it can be run from any command prompt on Windows without using Visual Studio. 
 
-1. Just download the zipped files <a href="https://github.com/tindn/lt-photo-album/tree/master/dotnet/photo-album" target="_blank">here</a> and extract them to a specific folder. The files include the executable, the config which contains the source url, the related files for NewtonsoftJson.
+1. Just download the zipped files <a href="https://github.com/tindn/lt-photo-album/tree/master/dotnet/photo-album" target="_blank">here</a> and extract them to a specific folder. The files include the executable, the config which has the source url, and the NewtonsoftJson dll.
 
-1. Open up command prompt, powershell, or your favorite Command line tool (mine is <a href="http://cmder.net/" target="_blank">cmder</a>. Go to the directory where you extracted the files (or even the bin folder if you build the source code in VS). You can use `cd path\to\file` or `pushd path\to\file` to get there.
+1. Open up command prompt, powershell, or your favorite command line tool (mine is <a href="http://cmder.net/" target="_blank">cmder</a>). Go to the directory where you extracted the files (or even the bin folder if you build the source code in VS). You can use `cd path\to\file` or `pushd path\to\file` to get there.
 
-1. Simply type photo-album to run the executable and see the magic happen.
+1. Simply type `photo-album` to run the executable and watch the magic happen.
 
 If you can't run the program, please open an issue on Github and I can assist.
+
 *Note: this program only runs on Windows*
 
 ## Evaluations and Improvements
 
 1. This program is written to fulfil a simple requirement of displaying photos from a specific album. There should be a validation of album id input.
 
-1. While the users of this program probably know what command to use, as specified by the requirement, I felt that it was important to have some help text.
+1. While the users of this program probably know what command to use, I felt that it was important to have some help text.
 
-1. Unit tests were written to cover the logic for processing arguments, retrieving photos, and displaying photo count. No unit tests were written to verify console output, as I feel like this requires decomposing the simple app into smaller components, going beyond the purpose of the program. This means only 67% code coverage.
+1. Unit tests were written to cover the logic for processing arguments, retrieving photos, and displaying photo count. No unit tests were written to verify console output, as this would require decomposing the simple app into smaller components, going beyond its purpose. This means only 67% code coverage.
