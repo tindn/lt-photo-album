@@ -103,7 +103,8 @@ For example 'photo-album 3' to get photos of album 3
 You can use argument -n to specify the number of photos to display.
 Default number is 10. For example, '-n 15' to display 15 photos.
 You can use argument -s to specify the starting position of the photos
-Default starting position is 1. For example, '-s 5' to start from the fifth photo.";
+Default starting position is 1. For example, '-s 5' to start from the fifth photo.
+Enter 'q' to quit anytime.";
         }
 
         public static int GetDisplayEnd(int photosCount, int startIndex, int displayCount)
